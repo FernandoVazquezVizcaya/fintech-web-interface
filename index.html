@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fintech Dashboard | Gestión Financiera</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- Menú de navegación superior -->
+    <header class="navbar">
+        <div class="logo">🏦 BankLine Cells</div>
+        <nav>
+            <ul>
+                <li><a href="#">Inicio</a></li>
+                <li><a href="#">Transferencias</a></li>
+                <li><a href="#">Tarjetas</a></li>
+            </ul>
+        </nav>
+        <div class="user-profile">Hola, Fernando</div>
+    </header>
+
+    <!-- Contenedor principal del Dashboard -->
+    <main class="dashboard-container">
+        
+        <!-- Sección Izquierda: Saldo y Tarjetas -->
+        <section class="account-summary">
+            <div class="balance-card">
+                <h2>Saldo Disponible</h2>
+                <h1 id="current-balance">$0.00</h1>
+            </div>
+
+            <div class="credit-cards">
+                <h3>Mis Tarjetas</h3>
+                <!-- Aquí inyectaremos tarjetas dinámicamente con JS -->
+                <div id="cards-container"></div>
+            </div>
+        </section>
+
+        <!-- Sección Derecha: Historial de Movimientos -->
+        <section class="transactions">
+            <h3>Últimos Movimientos</h3>
+            <table class="transactions-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Descripción</th>
+                        <th>Monto</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="transactions-body">
+                    <!-- Las filas se llenarán consumiendo la API -->
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
