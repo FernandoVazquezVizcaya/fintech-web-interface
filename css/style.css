@@ -100,6 +100,38 @@ body {
 }
 
 /* =========================================
+   ESTILOS DE TARJETAS DINÁMICAS
+   ========================================= */
+.credit-card-item {
+    background: linear-gradient(135deg, #072146 0%, #1a4f8b 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-top: 1rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.card-body {
+    font-size: 1.3rem;
+    letter-spacing: 3px;
+    margin-bottom: 1rem;
+}
+
+.card-footer {
+    text-align: right;
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+/* =========================================
    MEDIA QUERIES (Diseño Responsivo / Móvil)
    ========================================= */
 @media (max-width: 768px) {
