@@ -23,7 +23,10 @@
 
     <!-- Contenedor principal del Dashboard -->
     <main class="dashboard-container">
-        
+        <!-- Agrego un indicador de carga mientras espero a mi API -->
+        <div id="loader" style="text-align: center; grid-column: 1 / -1; font-size: 1.5rem; color: #072146; padding: 3rem;">
+            <strong>Cargando tu información financiera...</strong>
+        </div>
         <!-- Sección Izquierda: Saldo y Tarjetas -->
         <section class="account-summary">
             <div class="balance-card">

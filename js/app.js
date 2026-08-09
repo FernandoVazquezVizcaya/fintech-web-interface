@@ -1,17 +1,5 @@
-// Datos simulados (Mock Data) que más adelante vendrán de una API
-const accountData = {
-    balance: 18500.50,
-    cards: [
-        { id: 1, type: "Débito", brand: "Visa", last4: "4098", status: "Activa" },
-        { id: 2, type: "Crédito", brand: "Mastercard", last4: "8821", status: "Activa" }
-    ],
-    transactions: [
-        { id: 1, date: "2026-08-08", description: "Transferencia SPEI - Juan Pérez", amount: -1500.00, status: "Completado" },
-        { id: 2, date: "2026-08-07", description: "Depósito Nómina", amount: 20000.00, status: "Completado" },
-        { id: 3, date: "2026-08-05", description: "Pago de Servicios - CFE", amount: -450.00, status: "Procesando" },
-        { id: 4, date: "2026-08-02", description: "Compra - Amazon México", amount: -1250.00, status: "Completado" }
-    ]
-};
+// Borro el objeto estático accountData y creo un estado inicial vacío
+let currentAccountData = {};
 
 // Función para formatear números a moneda (Pesos MXN)
 const formatCurrency = (amount) => {
@@ -21,17 +9,49 @@ const formatCurrency = (amount) => {
     }).format(amount);
 };
 
-// Función principal para renderizar el Dashboard
-const renderDashboard = () => {
-    // 1. Inyectar el saldo dinámicamente
-    const balanceElement = document.getElementById('current-balance');
-    balanceElement.textContent = formatCurrency(accountData.balance);
+// 1. Defino mi función asíncrona para consumir mi API real en internet
+const fetchBankingData = async () => {
+    try {
+        // Hago la petición HTTP usando fetch a la URL de mi API
+        const response = await fetch('https://gist.githubusercontent.com/FernandoVazquezVizcaya/d82a37e4dbd3e73cdf0dff6f4d1a7d16/raw/5539b5447d4accf1e5f4d029120b8e7eea67ceb3/api-banco.json');
+        
+        // Verifico que el servidor haya respondido bien (Código HTTP 200)
+        if (!response.ok) {
+            throw new Error('No se pudo conectar con el servidor bancario');
+        }
 
-    // 2. Inyectar las tarjetas
+        // Convierto la respuesta de texto a un objeto JSON de JavaScript
+        const datosReales = await response.json();
+
+        // Guardo los datos que descargué en mi variable de estado
+        currentAccountData = datosReales;
+        
+        // Oculto mi indicador de carga porque ya tengo la información lista
+        document.getElementById('loader').style.display = 'none';
+        
+        // Llamo a mi función para pintar todo en el HTML
+        renderDashboard();
+
+    } catch (error) {
+        // Si el internet falla o la URL está mal, el código no se rompe, lo atrapo aquí
+        console.error("Error al obtener los datos:", error);
+        
+        // Le aviso al usuario que hubo un problema
+        document.getElementById('loader').innerHTML = '<span style="color: red;">Error al cargar tus datos financieros. Intenta más tarde.</span>';
+    }
+};
+
+// 2. Defino mi función principal para renderizar el Dashboard con los datos descargados
+const renderDashboard = () => {
+    // Inyecto el saldo
+    const balanceElement = document.getElementById('current-balance');
+    balanceElement.textContent = formatCurrency(currentAccountData.balance);
+
+    // Inyecto las tarjetas
     const cardsContainer = document.getElementById('cards-container');
-    cardsContainer.innerHTML = ''; // Limpiar el contenedor
+    cardsContainer.innerHTML = ''; 
     
-    accountData.cards.forEach(card => {
+    currentAccountData.cards.forEach(card => {
         const cardDiv = document.createElement('div');
         cardDiv.className = 'credit-card-item';
         cardDiv.innerHTML = `
@@ -49,11 +69,11 @@ const renderDashboard = () => {
         cardsContainer.appendChild(cardDiv);
     });
 
-    // 3. Inyectar los movimientos en la tabla
+    // Inyecto los movimientos
     const tbody = document.getElementById('transactions-body');
     tbody.innerHTML = ''; 
 
-    accountData.transactions.forEach(tx => {
+    currentAccountData.transactions.forEach(tx => {
         const tr = document.createElement('tr');
         const amountColor = tx.amount < 0 ? '#d32f2f' : '#2e7d32';
 
@@ -69,5 +89,5 @@ const renderDashboard = () => {
     });
 };
 
-// Ejecutar todo cuando la página termine de cargar
-document.addEventListener('DOMContentLoaded', renderDashboard);
+// 3. Cuando la página cargue, en lugar de pintar directo, primero llamo a mi API
+document.addEventListener('DOMContentLoaded', fetchBankingData);
