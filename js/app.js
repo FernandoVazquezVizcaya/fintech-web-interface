@@ -13,7 +13,7 @@ const formatCurrency = (amount) => {
 const fetchBankingData = async () => {
     try {
         // Hago la petición HTTP usando fetch a la URL de mi API
-        const response = await fetch('https://gist.githubusercontent.com/FernandoVazquezVizcaya/d82a37e4dbd3e73cdf0dff6f4d1a7d16/raw/5539b5447d4accf1e5f4d029120b8e7eea67ceb3/api-banco.json');
+        const response = await fetch('http://127.0.0.1:8000/api/dashboard/1');
         
         // Verifico que el servidor haya respondido bien (Código HTTP 200)
         if (!response.ok) {

@@ -1,0 +1,5 @@
+# Ignorar mi archivo 
+.env
+
+
+__pycache__/
