@@ -1,0 +1,131 @@
+/* =========================================
+   MIS ESTILOS GLOBALES
+========================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+/*color predominante ocupo degradado*/
+    background: linear-gradient(135deg, #1f5353 0%, #20206d 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+/* =========================================
+   TARJETA DE LOGIN
+========================================= */
+.logo-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+}
+
+
+/* El cuadro blanco principal donde va el formulario */
+.login-card {
+    background-color: #ffffff;
+    padding: 40px 30px;
+    border-radius: 16px; /* Bordes un poco más redondos y modernos */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); /* Sombra más pronunciada para que resalte sobre el fondo oscuro */
+    border-top: 5px solid #8cd5bd; /* Una línea verde esmeralda arriba para darle un toque vibrante */
+}
+
+/* =========================================
+   EL ENCABEZADO
+========================================= */
+.login-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-header h2 {
+    color: #0f172a; /* Hago match con el azul oscuro de mi fondo */
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.login-header p {
+    color: #64748b;
+    font-size: 14px;
+}
+
+/* =========================================
+   MIS CAJAS DE TEXTO (INPUTS)
+========================================= */
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600; /* Letra un poco más negrita para que se lea mejor */
+    margin-bottom: 6px;
+}
+
+/* El diseño de la caja donde escribo */
+.input-group input {
+    width: 100%;
+    padding: 14px 15px; /* Un poco más de espacio interior para que se vea premium */
+    border: 2px solid #e2e8f0; /* Borde un poco más grueso */
+    border-radius: 10px;
+    font-size: 14px;
+    color: #1e293b;
+    outline: none;
+    transition: all 0.3s ease;
+    background-color: #f8fafc; /* Un fondo gris súper clarito en la caja */
+}
+
+/* Efecto cuando le doy clic a mi caja de texto (se ilumina en verde esmeralda) */
+.input-group input:focus {
+    border-color: #10b981;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+/* =========================================
+   MI BOTÓN DE INICIO DE SESIÓN
+========================================= */
+.login-btn {
+    width: 100%;
+    padding: 14px;
+    /* Le pongo un degradado vibrante verde esmeralda a turquesa (colores de fintech moderna) */
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-top: 10px;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); /* Sombra del color del botón */
+}
+
+/* Efecto hover: el botón se levanta un poquito y la sombra crece cuando paso el mouse */
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+/* =========================================
+   MI CAJA DE ALERTAS DE ERROR
+========================================= */
+.error-message {
+    background-color: #fef2f2;
+    color: #dc2626;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 15px;
+    border: 1px solid #f87171;
+    font-weight: 500;
+}
