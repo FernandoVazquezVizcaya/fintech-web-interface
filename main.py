@@ -51,64 +51,93 @@ class TransferenciaRequest(BaseModel):
 # ==========================================
 @app.post("/api/transferencia")
 def realizar_transferencia(datos: TransferenciaRequest):
-    conexion = None  # <-- LA SOLUCIÓN: Declaro la variable vacía al inicio
+    conexion = None
     try:
         conexion = pyodbc.connect(DB_CONNECTION_STRING)
         cursor = conexion.cursor()
 
-        # 1. LA VERIFICACIÓN: Consulto la tabla CUENTAS para traer el Saldo, CuentaID y también su NumeroCuenta
+        # ==========================================
+        # 1. DATOS DEL EMISOR (El que envía el dinero)
+        # ==========================================
         cursor.execute("SELECT CuentaID, Saldo, NumeroCuenta FROM Cuentas WHERE UsuarioID = ?", datos.usuario_id)
-        resultado = cursor.fetchone()
+        resultado_emisor = cursor.fetchone()
 
-        if not resultado:
-            raise HTTPException(status_code=404, detail="Cuenta bancaria no encontrada")
+        if not resultado_emisor:
+            raise HTTPException(status_code=404, detail="Cuenta emisora no encontrada")
 
-        cuenta_id = resultado[0]
-        saldo_actual = float(resultado[1])
-        mi_propia_cuenta = resultado[2] # Atrapo el número de cuenta del usuario logueado
-        
+        cuenta_id_emisor = resultado_emisor[0]
+        saldo_emisor = float(resultado_emisor[1])
+        mi_propia_cuenta = resultado_emisor[2]
 
+        # Reglas de seguridad
         if datos.clabe == mi_propia_cuenta:
             raise HTTPException(status_code=400, detail="Operación rechazada: No puedes transferir dinero a tu misma cuenta.")
-
         if datos.monto <= 0:
             raise HTTPException(status_code=400, detail="El monto a transferir debe ser mayor a $0")
-            
-        if saldo_actual < datos.monto:
+        if saldo_emisor < datos.monto:
             raise HTTPException(status_code=400, detail="Fondos insuficientes. Tu saldo actual es menor al monto solicitado.")
-        # 2. EL RETIRO (UPDATE)
-        nuevo_saldo = saldo_actual - datos.monto
+
+        # ==========================================
+        # 2. BUSCAR AL RECEPTOR (¿Es de nuestro banco?)
+        # ==========================================
+        # Buscamos si la CLABE que escribieron existe en nuestra tabla de Cuentas
+        cursor.execute("SELECT CuentaID, Saldo FROM Cuentas WHERE NumeroCuenta = ?", datos.clabe)
+        resultado_receptor = cursor.fetchone()
+
+        fecha_hoy = datetime.now().strftime("%Y-%m-%d")
+
+        # ==========================================
+        # 3. PROCESAR LA SALIDA (Quitarle dinero al Emisor)
+        # ==========================================
+        nuevo_saldo_emisor = saldo_emisor - datos.monto
         
         cursor.execute('''
-            UPDATE Cuentas 
-            SET Saldo = ? 
-            WHERE CuentaID = ?
-        ''', (nuevo_saldo, cuenta_id))
+            UPDATE Cuentas SET Saldo = ? WHERE CuentaID = ?
+        ''', (nuevo_saldo_emisor, cuenta_id_emisor))
 
-        # 3. EL RECIBO (INSERT)
-        fecha_hoy = datetime.now().strftime("%Y-%m-%d")
-        descripcion_spei = f"Transferencia SPEI - {datos.concepto}"
-
+        # Recibo de salida (Negativo)
+        desc_salida = f"Transferencia SPEI a {datos.clabe} - {datos.concepto}"
         cursor.execute('''
             INSERT INTO Transacciones (CuentaID, Fecha, Descripcion, Monto, Estado)
             VALUES (?, ?, ?, ?, ?)
-        ''', (cuenta_id, fecha_hoy, descripcion_spei, -datos.monto, 'Completado'))
+        ''', (cuenta_id_emisor, fecha_hoy, desc_salida, -datos.monto, 'Completado'))
 
-        # 4. EL SELLO DE GARANTÍA
+
+        # ==========================================
+        # 4. PROCESAR LA ENTRADA (Darle dinero al Receptor)
+        # ==========================================
+        # Solo hacemos esto si encontramos la cuenta destino en la base
+        if resultado_receptor:
+            cuenta_id_receptor = resultado_receptor[0]
+            saldo_receptor = float(resultado_receptor[1])
+            
+            nuevo_saldo_receptor = saldo_receptor + datos.monto
+            
+            cursor.execute('''
+                UPDATE Cuentas SET Saldo = ? WHERE CuentaID = ?
+            ''', (nuevo_saldo_receptor, cuenta_id_receptor))
+
+            # Recibo de entrada (Positivo)
+            desc_entrada = f"Transferencia recibida - {datos.concepto}"
+            cursor.execute('''
+                INSERT INTO Transacciones (CuentaID, Fecha, Descripcion, Monto, Estado)
+                VALUES (?, ?, ?, ?, ?)
+            ''', (cuenta_id_receptor, fecha_hoy, desc_entrada, datos.monto, 'Completado'))
+
+        # ==========================================
+        # 5. sello
+        # ==========================================
         conexion.commit()
-        conexion.close() 
+        conexion.close()
 
-        # Le respondo al Front-End
         return {
             "mensaje": "Transferencia enviada con éxito", 
-            "nuevo_saldo": nuevo_saldo
+            "nuevo_saldo": nuevo_saldo_emisor
         }
 
     except HTTPException:
-        # Si es un error mío (ej. fondos insuficientes), lo dejo pasar
         raise
     except Exception as e:
-        #valido si realmente existe antes de usarla
         if conexion:
             conexion.rollback()
             conexion.close()
