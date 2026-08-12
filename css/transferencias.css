@@ -1,0 +1,123 @@
+/* =========================================
+   CONTENEDOR PRINCIPAL DE TRANSFERENCIAS
+========================================= */
+.transfer-container {
+    /* Uso flexbox para centrar mi tarjeta en medio de la pantalla (debajo del navbar) */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 60px 20px;
+    min-height: calc(100vh - 80px); 
+    background-color: #f4f7f6; /* El mismo gris claro de fondo que uso en el dashboard */
+}
+
+/* =========================================
+   LA TARJETA DEL FORMULARIO
+========================================= */
+.transfer-card {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 500px; /* Un poco más ancha que el login para que quepan bien los datos */
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Sombra elegante */
+    border-top: 5px solid #10b981; /* La línea verde esmeralda que indica que aquí se mueve dinero */
+}
+
+.transfer-card h2 {
+    color: #1e293b;
+    font-size: 26px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.transfer-card p {
+    color: #64748b;
+    font-size: 15px;
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+/* =========================================
+   CAJAS DE TEXTO (INPUTS)
+========================================= */
+.input-group {
+    margin-bottom: 25px;
+}
+
+.input-group label {
+    display: block;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 16px;
+    color: #1e293b;
+    outline: none;
+    transition: all 0.3s ease;
+    background-color: #f8fafc;
+}
+
+/* Efecto al dar clic para escribir (borde verde) */
+.input-group input:focus {
+    border-color: #10b981;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+/* =========================================
+   BOTÓN DE TRANSFERIR
+========================================= */
+.transfer-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-top: 10px;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.transfer-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+/* =========================================
+   ALERTAS (ÉXITO Y ERROR)
+========================================= */
+.error-message {
+    background-color: #fef2f2;
+    color: #dc2626;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 20px;
+    border: 1px solid #f87171;
+    font-weight: 500;
+}
+
+.success-message {
+    background-color: #f0fdf4;
+    color: #15803d;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 20px;
+    border: 1px solid #4ade80;
+    font-weight: 500;
+}

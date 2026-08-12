@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import pyodbc
 import bcrypt
 from pydantic import BaseModel
+from datetime import datetime 
 
 # 1. Cargo las variables secretas de mi archivo .env a la memoria de mi computadora
 load_dotenv()
@@ -38,11 +39,82 @@ DB_CONNECTION_STRING = os.getenv("DB_CONNECTION_STRING")
 class LoginRequest(BaseModel):
     email: str
     password: str
+# Mi "molde" estricto para recibir los datos de la transferencia
+class TransferenciaRequest(BaseModel):
+    usuario_id: int
+    clabe: str
+    monto: float
+    concepto: str
 
 # ==========================================
 # RUTAS DE LA API (Endpoints)
 # ==========================================
+@app.post("/api/transferencia")
+def realizar_transferencia(datos: TransferenciaRequest):
+    conexion = None  # <-- LA SOLUCIÓN: Declaro la variable vacía al inicio
+    try:
+        conexion = pyodbc.connect(DB_CONNECTION_STRING)
+        cursor = conexion.cursor()
 
+        # 1. LA VERIFICACIÓN: Consulto la tabla CUENTAS para traer el Saldo, CuentaID y también su NumeroCuenta
+        cursor.execute("SELECT CuentaID, Saldo, NumeroCuenta FROM Cuentas WHERE UsuarioID = ?", datos.usuario_id)
+        resultado = cursor.fetchone()
+
+        if not resultado:
+            raise HTTPException(status_code=404, detail="Cuenta bancaria no encontrada")
+
+        cuenta_id = resultado[0]
+        saldo_actual = float(resultado[1])
+        mi_propia_cuenta = resultado[2] # Atrapo el número de cuenta del usuario logueado
+        
+
+        if datos.clabe == mi_propia_cuenta:
+            raise HTTPException(status_code=400, detail="Operación rechazada: No puedes transferir dinero a tu misma cuenta.")
+
+        if datos.monto <= 0:
+            raise HTTPException(status_code=400, detail="El monto a transferir debe ser mayor a $0")
+            
+        if saldo_actual < datos.monto:
+            raise HTTPException(status_code=400, detail="Fondos insuficientes. Tu saldo actual es menor al monto solicitado.")
+        # 2. EL RETIRO (UPDATE)
+        nuevo_saldo = saldo_actual - datos.monto
+        
+        cursor.execute('''
+            UPDATE Cuentas 
+            SET Saldo = ? 
+            WHERE CuentaID = ?
+        ''', (nuevo_saldo, cuenta_id))
+
+        # 3. EL RECIBO (INSERT)
+        fecha_hoy = datetime.now().strftime("%Y-%m-%d")
+        descripcion_spei = f"Transferencia SPEI - {datos.concepto}"
+
+        cursor.execute('''
+            INSERT INTO Transacciones (CuentaID, Fecha, Descripcion, Monto, Estado)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (cuenta_id, fecha_hoy, descripcion_spei, -datos.monto, 'Completado'))
+
+        # 4. EL SELLO DE GARANTÍA
+        conexion.commit()
+        conexion.close() 
+
+        # Le respondo al Front-End
+        return {
+            "mensaje": "Transferencia enviada con éxito", 
+            "nuevo_saldo": nuevo_saldo
+        }
+
+    except HTTPException:
+        # Si es un error mío (ej. fondos insuficientes), lo dejo pasar
+        raise
+    except Exception as e:
+        #valido si realmente existe antes de usarla
+        if conexion:
+            conexion.rollback()
+            conexion.close()
+        raise HTTPException(status_code=500, detail=f"Error interno del banco: {str(e)}")
+
+    
 @app.post("/api/login")
 def iniciar_sesion(credenciales: LoginRequest):
     try:
@@ -173,3 +245,4 @@ def obtener_datos_dashboard(usuario_id: int):
     except Exception as e:
         print("Error en mi conexión a SQL Server:", e)
         raise HTTPException(status_code=500, detail="Error interno del servidor")
+    
