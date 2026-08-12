@@ -1,3 +1,26 @@
+/* =========================================
+   1. BARRERA DE SEGURIDAD Y CERRAR SESIÓN
+========================================= */
+// Reviso si el navegador tiene guardado el "gafete" (usuario_id)
+const usuarioActual = localStorage.getItem('usuario_id');
+
+// Si no hay gafete, significa que es un intruso o ya cerró sesión.
+if (!usuarioActual) {
+    window.location.href = 'login.html'; // Lo pateo inmediatamente al login
+}
+
+const logoutBtn = document.getElementById('logout-btn');
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+        // Destruyo el gafete de seguridad y lo mando al login
+        localStorage.removeItem('usuario_id');
+        window.location.href = 'login.html';
+    });
+}
+
+/* =========================================
+   2. LÓGICA DEL DASHBOARD
+========================================= */
 // Borro el objeto estático accountData y creo un estado inicial vacío
 let currentAccountData = {};
 
@@ -9,11 +32,12 @@ const formatCurrency = (amount) => {
     }).format(amount);
 };
 
-// 1. Defino mi función asíncrona para consumir mi API real en internet
+// Defino mi función asíncrona para consumir mi API real en internet
 const fetchBankingData = async () => {
     try {
         // Hago la petición HTTP usando fetch a la URL de mi API
-        const response = await fetch('http://127.0.0.1:8000/api/dashboard/1');
+        // ¡OJO AQUÍ! Cambié el '1' por la variable usuarioActual para que sea dinámico
+        const response = await fetch(`http://127.0.0.1:8000/api/dashboard/${usuarioActual}`);
         
         // Verifico que el servidor haya respondido bien (Código HTTP 200)
         if (!response.ok) {
@@ -22,7 +46,7 @@ const fetchBankingData = async () => {
 
         // Convierto la respuesta de texto a un objeto JSON de JavaScript
         const datosReales = await response.json();
-
+        
         // Guardo los datos que descargué en mi variable de estado
         currentAccountData = datosReales;
         
@@ -41,8 +65,20 @@ const fetchBankingData = async () => {
     }
 };
 
-// 2. Defino mi función principal para renderizar el Dashboard con los datos descargados
+// Defino mi función principal para renderizar el Dashboard con los datos descargados
 const renderDashboard = () => {
+    
+    // ==========================================
+    // AQUÍ ES DONDE METÍ LA LÓGICA DEL NOMBRE
+    // ==========================================
+    const saludoDiv = document.getElementById('user-greeting');
+    if (saludoDiv && currentAccountData.user_name) {
+        // Separo el nombre completo por espacios y agarro solo la primera palabra
+        const primerNombre = currentAccountData.user_name.split(" ")[0]; 
+        saludoDiv.textContent = `Hola, ${primerNombre}`;
+    }
+    // ==========================================
+
     // Inyecto el saldo
     const balanceElement = document.getElementById('current-balance');
     balanceElement.textContent = formatCurrency(currentAccountData.balance);
@@ -87,7 +123,8 @@ const renderDashboard = () => {
         `;
         tbody.appendChild(tr);
     });
+    
 };
 
-// 3. Cuando la página cargue, en lugar de pintar directo, primero llamo a mi API
+// Cuando la página cargue, en lugar de pintar directo, primero llamo a mi API
 document.addEventListener('DOMContentLoaded', fetchBankingData);

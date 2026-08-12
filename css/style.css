@@ -15,7 +15,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #072146; /* Azul tipo bancario */
+    background: linear-gradient(135deg, #1f5353 0%, #20206d 100%);
     color: white;
     padding: 1rem 2rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -51,6 +51,19 @@ body {
     padding: 2rem;
     max-width: 1200px;
     margin: 0 auto;
+}
+.user-profile {
+    font-family: 'Times New Roman', Times, serif;
+
+}
+
+/* =========================================
+   CONTENEDOR DE PERFIL Y CERRAR SESIÓN
+========================================= */
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Separación perfecta y controlada entre el nombre y el botón */
 }
 
 /* Tarjetas de Información */
@@ -103,7 +116,7 @@ body {
    ESTILOS DE TARJETAS DINÁMICAS
    ========================================= */
 .credit-card-item {
-    background: linear-gradient(135deg, #072146 0%, #1a4f8b 100%);
+   background: linear-gradient(135deg, #1f5353 0%, #20206d 100%);
     color: white;
     padding: 1.5rem;
     border-radius: 12px;
@@ -162,4 +175,24 @@ body {
     .transactions-table {
         min-width: 500px; /* Asegura que la tabla no se deforme */
     }
+}
+/* =========================================
+   MI BOTÓN DE CERRAR SESIÓN
+========================================= */
+.logout-btn {
+    background-color: transparent;
+    color: #f87171; /* Un rojo claro/salmón para que resalte en el fondo oscuro */
+    border: 1px solid #f87171;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 5px; /* Lo separo un poco del texto" */
+    transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+    background-color: #f87171;
+    color: white;
 }

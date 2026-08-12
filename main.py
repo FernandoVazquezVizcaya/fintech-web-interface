@@ -9,6 +9,8 @@ from pydantic import BaseModel
 # 1. Cargo las variables secretas de mi archivo .env a la memoria de mi computadora
 load_dotenv()
 
+
+
 # Inicializo mi API
 app = FastAPI(title="Fintech API")
 
@@ -100,6 +102,16 @@ def obtener_datos_dashboard(usuario_id: int):
         # Abro la conexión usando la variable que traje del .env
         conexion = pyodbc.connect(DB_CONNECTION_STRING)
         cursor = conexion.cursor()
+        # 1. Consulto el nombre del usuario
+        cursor.execute('''
+            SELECT Nombre 
+            FROM Usuarios 
+            WHERE UsuarioID = ?
+        ''', usuario_id)
+        
+        fila_usuario = cursor.fetchone()
+        # Si por alguna razón no encuentra el nombre, pongo "Usuario" por defecto
+        nombre_usuario = fila_usuario[0] if fila_usuario else "Usuario"
 
         # Consulto el saldo
         cursor.execute('''
@@ -151,13 +163,13 @@ def obtener_datos_dashboard(usuario_id: int):
 
         conexion.close()
 
-        # Devuelvo la información a mi Front-End
+        # Devuelvo la información a mi Front-End, agregando el nombre
         return {
+            "user_name": nombre_usuario,
             "balance": saldo_actual,
             "cards": tarjetas,
             "transactions": transacciones
         }
-
     except Exception as e:
         print("Error en mi conexión a SQL Server:", e)
         raise HTTPException(status_code=500, detail="Error interno del servidor")
