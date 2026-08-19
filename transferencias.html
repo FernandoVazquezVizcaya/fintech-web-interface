@@ -10,22 +10,27 @@
 </head>
 <body>
 
-    <!-- BARRA DE NAVEGACIÓN-->
-    <nav class="navbar">
-        <div class="navbar-left">
-            <h1>BankLine Cells</h1>
-        </div>
-        <div class="navbar-center">
-            <a href="index.html">Inicio</a>
-            <a href="transferencias.html" class="active">Transferencias</a>
-            <a href="#">Tarjetas</a>
-        </div>
-        <div class="navbar-right">
+   <!-- Menú de navegación superior -->
+    <header class="navbar">
+        <div class="logo">BankLine Cells</div>
+        <nav>
+            <ul>
+                <a href="index.html" class="active">Inicio</a>
+                <a href="transferencias.html">Transferencias</a>
+                <li><a href="#">Tarjetas</a></li>
+            </ul>
+        </nav>
+       
+         <div class="navbar-right">
             <div class="user-actions">
+                
                 <button id="logout-btn" class="logout-btn">Cerrar Sesión</button>
             </div>
         </div>
-    </nav>
+    </header>
+
+       
+   
 
     <!-- CONTENEDOR PRINCIPAL DE TRANSFERENCIAS -->
     <div class="transfer-container">
@@ -40,6 +45,7 @@
                 <div class="input-group">
                     <label for="clabe">Cuenta CLABE (18 dígitos)</label>
                     <input type="text" id="clabe" placeholder="Ej. 012345678901234567" maxlength="18" required>
+                    <small id="banco-detectado" style="color: #10b981; font-weight: 600; display: block; margin-top: 5px; height: 18px;"></small
                 </div>
                 
                 <div class="input-group">
@@ -60,10 +66,13 @@
 
                 <button type="submit" class="transfer-btn" id="submit-transfer-btn">Transferir ahora</button>
             </form>
+            
         </div>
+            
         
+       
     </div>
-
+    <script src="js/tema.js"></script>
     <script src="js\trasnferencias.js"></script>
 </body>
 </html>

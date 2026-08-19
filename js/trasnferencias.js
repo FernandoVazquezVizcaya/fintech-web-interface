@@ -113,3 +113,46 @@ transferForm.addEventListener('submit', async (evento) => {
         submitBtn.disabled = false;
     }
 });
+/* =========================================
+   CATÁLOGO DE BANCOS (Detección automática)
+========================================= */
+// Diccionario oficial de códigos Banxico (los más comunes en México)
+const catalogoBancos = {
+    "002": "Banamex",
+    "012": "BBVA México",
+    "014": "Santander",
+    "021": "HSBC",
+    "072": "Banorte",
+    "127": "Banco Azteca",
+    "138": "Bancoppel",
+    "044": "Scotiabank",
+    // Vamos a registrar tu propio banco para transferencias internas
+    "098": "BankLine Cells (Interno)"
+};
+
+const clabeInput = document.getElementById('clabe');
+const bancoDetectado = document.getElementById('banco-detectado');
+
+// Escuchamos cada vez que el usuario teclea algo en la caja de CLABE
+clabeInput.addEventListener('input', (evento) => {
+    // Solo permitimos números (borramos letras si intentan escribirlas)
+    let valor = evento.target.value.replace(/\D/g, ''); 
+    evento.target.value = valor;
+
+    // Si ya escribió al menos 3 números, intentamos detectar el banco
+    if (valor.length >= 3) {
+        const prefijo = valor.substring(0, 3);
+        const nombreBanco = catalogoBancos[prefijo];
+
+        if (nombreBanco) {
+            bancoDetectado.textContent = `Destino: ${nombreBanco}`;
+            bancoDetectado.style.color = "#10b981"; // Verde éxito
+        } else {
+            bancoDetectado.textContent = `Banco no identificado (SPEI genérico)`;
+            bancoDetectado.style.color = "#64748b"; // Gris
+        }
+    } else {
+        // Si borra el texto y hay menos de 3 números, limpiamos el mensaje
+        bancoDetectado.textContent = "";
+    }
+});
