@@ -70,7 +70,7 @@ body {
 .balance-card, .credit-cards, .transactions {
     background: white;
     padding: 1.5rem;
-    border-radius: 8px;
+    border-radius: 15px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 
@@ -177,7 +177,7 @@ body {
     }
 }
 /* =========================================
-   MI BOTÓN DE CERRAR SESIÓN
+   BOTÓN DE CERRAR SESIÓN
 ========================================= */
 .logout-btn {
     background-color: transparent;
@@ -195,4 +195,111 @@ body {
 .logout-btn:hover {
     background-color: #f87171;
     color: white;
+}
+
+/* =========================================
+   ESTILOS DEL BOTÓN DEL TEMA (CORREGIDO)
+========================================= */
+.theme-btn {
+    background-color: #f1f5f9; /* Fondo gris claro */
+    color: #1e293b; /* Texto oscuro para que siempre se lea */
+    border: 1px solid #cbd5e1;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin: 10px auto;
+    display: block;
+}
+
+.theme-btn:hover {
+    background-color: #e2e8f0;
+}
+
+/* =========================================
+   MODO OSCURO (COMPLETO Y DEFINITIVO)
+========================================= */
+body.dark-theme {
+    background-color: #0f172a; 
+}
+
+/* 1. EL BOTÓN DEL TEMA */
+body.dark-theme .theme-btn {
+    background-color: #334155;
+    color: #f8fafc;
+    border-color: #475569;
+}
+
+/* 2. FORZAR EL FONDO OSCURO EN TUS 3 CAJAS PRINCIPALES */
+body.dark-theme .balance-card,
+body.dark-theme .credit-cards,
+body.dark-theme .transactions {
+    background-color: #1e293b !important; 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+    border: none !important;
+}
+
+/* 3. TEXTOS BLANCOS (Títulos, Saldo Principal y Párrafos) */
+body.dark-theme h2, 
+body.dark-theme h3, 
+body.dark-theme p, 
+body.dark-theme #current-balance {
+    color: #f8fafc !important; 
+}
+
+/* 4. LA TABLA DE MOVIMIENTOS (Fecha, Descripción, etc.) */
+body.dark-theme .transactions-table th {
+    background-color: #334155 !important;
+    color: #f8fafc !important;
+    border-bottom: 1px solid #475569 !important;
+}
+
+body.dark-theme .transactions-table td {
+    color: #e2e8f0; /* Sin el !important para no borrar tus montos verdes y rojos */
+    border-bottom: 1px solid #334155 !important;
+}
+
+/* 5. LAS ETIQUETAS DE ESTADO (Ej. "Completado") */
+body.dark-theme td span,
+body.dark-theme .badge,
+body.dark-theme .estado,
+body.dark-theme .status {
+    background-color: #334155 !important;
+    color: #f8fafc !important;
+    border: 1px solid #475569 !important;
+}
+/* =========================================
+   PANTALLA DE TRANSFERENCIAS (MODO OSCURO)
+========================================= */
+/* Fondo oscuro para la tarjeta central de Enviar Dinero */
+body.dark-theme .transfer-card,
+body.dark-theme .transfer-container,
+body.dark-theme form {
+    background-color: #1e293b !important; 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+    border: none !important;
+}
+
+/* Textos del formulario a color blanco */
+body.dark-theme h2, 
+body.dark-theme p, 
+body.dark-theme label {
+    color: #f8fafc !important;
+}
+
+/* Cajas de texto (Inputs) adaptadas al modo oscuro */
+body.dark-theme input[type="text"],
+body.dark-theme input[type="number"] {
+    background-color: #0f172a !important; 
+    color: #f8fafc !important; 
+    border: 1px solid #475569 !important; 
+}
+
+/* Cuando hace clic en la caja de texto para escribir */
+body.dark-theme input[type="text"]:focus,
+body.dark-theme input[type="number"]:focus {
+    border-color: #10b981 !important; 
+    outline: none;
 }
